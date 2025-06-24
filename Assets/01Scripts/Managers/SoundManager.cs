@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : Singleton<SoundManager>
+public class SoundManager : Singleton<SoundManager>, IManager
 {
     private SoundObject BGMAudioObject;
     private float current, percent;
@@ -12,6 +12,8 @@ public class SoundManager : Singleton<SoundManager>
     public float bgmVolume = 1f;
     public float sfxVolume = 1f;
 
+    private SoundObject prevAudio;
+
     public void Init()
     {
         GetSoundValue();
@@ -19,6 +21,25 @@ public class SoundManager : Singleton<SoundManager>
         if(BGM != null)
             ChangeBGM(BGM);
     }
+
+
+    public void StopSound()
+    {
+        if(prevAudio)
+            prevAudio.ReturnToPool();
+        //for (int i = 0; i < PoolManager.Instance.soundPool.transform.childCount; i++)
+        //{
+        //    Transform t = PoolManager.Instance.soundPool.transform.GetChild(i);
+
+        //    if (t.TryGetComponent<SoundObject>(out var sound))
+        //    {
+        //        if (sound == BGMAudioObject)
+        //            continue;
+        //        sound.ReturnToPool();
+        //    }
+        //}
+    }
+
 
     public void ChangeBGMVolume(float value)
     {
@@ -40,6 +61,7 @@ public class SoundManager : Singleton<SoundManager>
                 if (sound == BGMAudioObject)
                     continue;
                 sound.AudioSource.volume = sfxVolume;
+                prevAudio = sound;
             }
         }
     }
@@ -58,7 +80,7 @@ public class SoundManager : Singleton<SoundManager>
             StartCoroutine("ChangeBGMClip", audioClip);
     }
 
-    public SoundObject PlaySound(AudioClip audioClip, bool imortal)
+    public SoundObject PlaySound(AudioClip audioClip, bool imortal = false)
     {
         if (PoolManager.Instance.soundPool.GetPoolObject().TryGetComponent<SoundObject>(out SoundObject soundObject))
         {
@@ -105,4 +127,5 @@ public class SoundManager : Singleton<SoundManager>
         PlayerPrefs.SetFloat("sfxVolume", sfxVolume);
         PlayerPrefs.Save();
     }
+
 }

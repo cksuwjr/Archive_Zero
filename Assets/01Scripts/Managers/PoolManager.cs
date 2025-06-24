@@ -8,6 +8,6 @@ public class PoolManager : Singleton<PoolManager>, IManager
 
     public void Init()
     {
-        
+        soundPool?.Init();
     }
 }
