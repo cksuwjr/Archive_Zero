@@ -6,10 +6,12 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     private DataManager dataManager;
-    //private UIManager uiManager;
+    private UIManager uiManager;
     private SoundManager soundManager;
     private PoolManager poolManager;
     private TitleSceneManager titleSceneManager;
+    private ScenarioManager scenarioManager;
+
 
     [SerializeField] private GameObject player;
 
@@ -33,19 +35,21 @@ public class GameManager : Singleton<GameManager>
     {
         GameObject.Find("DataManager")?.TryGetComponent<DataManager>(out dataManager);
         GameObject.Find("SoundManager")?.TryGetComponent<SoundManager>(out soundManager);
-        //GameObject.Find("UIManager")?.TryGetComponent<UIManager>(out uiManager);
+        GameObject.Find("UIManager")?.TryGetComponent<UIManager>(out uiManager);
         GameObject.Find("PoolManager")?.TryGetComponent<PoolManager>(out poolManager);
 
         GameObject.Find("TitleSceneManager")?.TryGetComponent<TitleSceneManager>(out titleSceneManager);
+        GameObject.Find("ScenarioManager")?.TryGetComponent<ScenarioManager>(out scenarioManager);
     }
 
     private void InitManagers()
     {
         dataManager?.Init();
-        //uiManager?.Init();
+        uiManager?.Init();
         poolManager?.Init();
         soundManager?.Init();
 
         titleSceneManager?.Init();
+        scenarioManager?.Init();
     }
 }

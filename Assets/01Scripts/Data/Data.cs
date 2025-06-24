@@ -22,3 +22,12 @@ public class WaveData
     public int mob1Count;
     public int mob2Count;
 }
+
+[System.Serializable]
+public class StoryData
+{
+    public int id;
+    public string content;
+    public string sort;
+    public string tts;
+}

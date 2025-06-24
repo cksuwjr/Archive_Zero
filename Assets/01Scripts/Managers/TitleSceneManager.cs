@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class TitleSceneManager : MonoBehaviour
+public class TitleSceneManager : MonoBehaviour, IManager
 {
     private TextMeshProUGUI clickText;
 
