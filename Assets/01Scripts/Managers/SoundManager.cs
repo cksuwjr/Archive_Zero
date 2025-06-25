@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SoundManager : Singleton<SoundManager>, IManager
@@ -25,8 +26,10 @@ public class SoundManager : Singleton<SoundManager>, IManager
 
     public void StopSound()
     {
-        if(prevAudio)
-            prevAudio.ReturnToPool();
+        if (!prevAudio) return;
+
+        if (prevAudio.gameObject.activeSelf)
+            prevAudio.Stop();
         //for (int i = 0; i < PoolManager.Instance.soundPool.transform.childCount; i++)
         //{
         //    Transform t = PoolManager.Instance.soundPool.transform.GetChild(i);
@@ -61,7 +64,6 @@ public class SoundManager : Singleton<SoundManager>, IManager
                 if (sound == BGMAudioObject)
                     continue;
                 sound.AudioSource.volume = sfxVolume;
-                prevAudio = sound;
             }
         }
     }
@@ -85,6 +87,8 @@ public class SoundManager : Singleton<SoundManager>, IManager
         if (PoolManager.Instance.soundPool.GetPoolObject().TryGetComponent<SoundObject>(out SoundObject soundObject))
         {
             soundObject.Init(audioClip, imortal);
+            if(!imortal)
+                prevAudio = soundObject;
             return soundObject;
         }
         return null;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -27,8 +28,11 @@ public class GameManager : Singleton<GameManager>
 
     protected override void DoAwake()
     {
-        AssignManagers();
-        InitManagers();
+        SceneManager.sceneLoaded += (scene, mode) =>
+        {
+            AssignManagers();
+            InitManagers();
+        };
     }
 
     private void AssignManagers()
@@ -38,8 +42,15 @@ public class GameManager : Singleton<GameManager>
         GameObject.Find("UIManager")?.TryGetComponent<UIManager>(out uiManager);
         GameObject.Find("PoolManager")?.TryGetComponent<PoolManager>(out poolManager);
 
-        GameObject.Find("TitleSceneManager")?.TryGetComponent<TitleSceneManager>(out titleSceneManager);
-        GameObject.Find("ScenarioManager")?.TryGetComponent<ScenarioManager>(out scenarioManager);
+        if(GameObject.Find("TitleSceneManager"))
+            GameObject.Find("TitleSceneManager")?.TryGetComponent<TitleSceneManager>(out titleSceneManager);
+        else
+            titleSceneManager = null;
+
+        if(GameObject.Find("ScenarioManager"))
+            GameObject.Find("ScenarioManager")?.TryGetComponent<ScenarioManager>(out scenarioManager);
+        else
+            scenarioManager = null;
     }
 
     private void InitManagers()

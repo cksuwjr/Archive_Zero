@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ScenarioManager : SingletonDestroy<ScenarioManager>, IManager
 {
     private List<StoryData> stories;
     private bool texting = false;
     private int page = 0;
+
+    public UnityEvent OnStoryEnd;
 
     public void Init()
     {
@@ -51,7 +52,11 @@ public class ScenarioManager : SingletonDestroy<ScenarioManager>, IManager
 
     public void StopStory()
     {
+        SoundManager.Instance.StopSound();
         UIManager.Instance.CloseStoryPannel();
+
+        OnStoryEnd?.Invoke();
+        OnStoryEnd = null;
     }
 
     private void LoadPage()
