@@ -26,8 +26,8 @@ public class FixedMovingBackground : MonoBehaviour
 
     public void Move(float x, float y)
     {
-        offset.x += x * speed;
-        offset.y += y * speed;
+        offset.x += x * speed * Time.fixedDeltaTime;
+        offset.y += y * speed * Time.fixedDeltaTime;
         render.material.mainTextureOffset = offset;
     }
 

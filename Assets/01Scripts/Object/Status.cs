@@ -4,15 +4,39 @@ using UnityEngine;
 
 public class Status : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private float maxHp;
+    [SerializeField] private float hp;
+    [SerializeField] private float exp;
+    [SerializeField] private float attackPower;
+    [SerializeField] private float moveSpeed;
+
+    public float MaxHP
     {
-        
+        get { return maxHp; }
+        set { maxHp = value; }
     }
 
-    // Update is called once per frame
-    void Update()
+    public float HP
     {
-        
+        get { return hp; }
+        set { hp = value; }
+    }
+
+    public float Exp
+    {
+        get { return exp; }
+        set { exp = value; }
+    }
+
+    public float AttackPower
+    {
+        get { return attackPower; }
+        set { attackPower = value; }
+    }
+
+    public float MoveSpeed
+    {
+        get { return moveSpeed; }
+        set { moveSpeed = value; }
     }
 }

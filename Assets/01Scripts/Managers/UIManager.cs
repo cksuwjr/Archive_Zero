@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class UIManager : SingletonDestroy<UIManager>, IManager
 {
+    private Image expBar;
+    private TextMeshProUGUI archieveText;
+
+    private TextMeshProUGUI timeText;
+
     private GameObject introBackground;
     private GameObject playGuide;
     private TextMeshProUGUI contentText;
@@ -17,11 +22,32 @@ public class UIManager : SingletonDestroy<UIManager>, IManager
     public void Init()
     {
         var canvas = GameObject.Find("Canvas");
-        introBackground = canvas.transform.GetChild(0).gameObject;
+
+        //
+        canvas.transform.GetChild(0).GetChild(1).GetChild(0).TryGetComponent<Image>(out expBar);
+        if (GameManager.Instance.Player.TryGetComponent<PlayerController>(out var player))
+            player.OnChangeExp += (exp, maxExp) => { expBar.fillAmount = exp/maxExp; };
+
+        //
+        canvas.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).TryGetComponent<TextMeshProUGUI>(out archieveText);
+
+
+
+        //
+        if (canvas.transform.GetChild(2).GetChild(0).GetChild(0).TryGetComponent<TextMeshProUGUI>(out timeText))
+            TimeManager.Instance.OnTimeChanged += (time) =>
+            {
+                timeText.text = $"{(int)time / 60:00}:{time % 60:00}";
+            };
+
+
+        //
+        introBackground = canvas.transform.GetChild(3).gameObject;
         
         introBackground.transform.GetChild(0).GetChild(0).TryGetComponent<TextMeshProUGUI>(out contentText);
 
-        playGuide = canvas.transform.GetChild(1).gameObject;
+        //
+        playGuide = canvas.transform.GetChild(4).gameObject;
 
         pages = playGuide.transform.GetChild(0).GetChild(0).gameObject;
 
@@ -53,7 +79,6 @@ public class UIManager : SingletonDestroy<UIManager>, IManager
 
     public void GuidePage(int index)
     {
-        Debug.Log(page);
         for (int i = 0; i < pages.transform.childCount; i++)
         {
             if(i == index)

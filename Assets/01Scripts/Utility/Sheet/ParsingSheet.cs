@@ -6,7 +6,7 @@ using System;
 
 public class ParsingSheet : MonoBehaviour
 {
-    public static List<T> GetDatas<T>(string data)
+    public static List<T> GetDatas<T>(string data, int columnCount)
     {
         List<T> returnList = new List<T>();
         string[] splitedData = data.Split('\n');
@@ -14,20 +14,20 @@ public class ParsingSheet : MonoBehaviour
         foreach (string element in splitedData)
         {
             string[] datas = element.Split('\t');
-            returnList.Add(GetData<T>(datas));
+            returnList.Add(GetData<T>(datas, columnCount));
         }
 
         return returnList;
     }
 
-    public static T GetData<T>(string[] datas)
+    public static T GetData<T>(string[] datas, int columnCount)
     {
         object data = Activator.CreateInstance(typeof(T));
 
         // 클래스에 있는 변수들을 순서대로 저장한 배열
         FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < columnCount; i++)
         {
             try
             {
