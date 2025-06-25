@@ -18,4 +18,10 @@ public class SoundObject : PoolObject
         audioSource.Play();
         if (!imortal) Invoke("ReturnToPool", audioSource.clip.length);
     }
+
+    public void Stop()
+    {
+        audioSource.Stop();
+        Invoke("ReturnToPool", 0);
+    }
 }

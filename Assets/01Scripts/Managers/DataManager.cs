@@ -39,6 +39,9 @@ public class DataManager : Singleton<DataManager>, IManager
     [SerializeField] private List<WaveData> waveWhiteData;
     [SerializeField] private List<StoryData> storyData;
 
+    public bool isStoryLoad = false;
+    public Action OnStoryLoaded;
+
     private string dataPath;
 
     public void Init()
@@ -100,7 +103,9 @@ public class DataManager : Singleton<DataManager>, IManager
                 if (www.result == UnityWebRequest.Result.Success)
                     storyData = ParsingSheet.GetDatas<StoryData>(www.downloadHandler.text);
                 else
-                    LoadStageData(type); 
+                    LoadStageData(type);
+                isStoryLoad = true;
+                OnStoryLoaded?.Invoke();
                 break;
         }
     }
