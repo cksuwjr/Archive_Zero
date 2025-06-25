@@ -14,6 +14,7 @@ public class PoolObject : MonoBehaviour
 
     public void ReturnToPool()
     {
-        pool.ReturnPoolObject(this);
+        if(pool)
+            pool.ReturnPoolObject(this);
     }
 }

@@ -65,7 +65,7 @@ public class DataManager : Singleton<DataManager>, IManager
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success)
-                    monsterData = ParsingSheet.GetDatas<MonsterData>(www.downloadHandler.text);
+                    monsterData = ParsingSheet.GetDatas<MonsterData>(www.downloadHandler.text, 8);
                 else
                     LoadStageData(type);
                 break;
@@ -74,7 +74,7 @@ public class DataManager : Singleton<DataManager>, IManager
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success)
-                    waveData = ParsingSheet.GetDatas<WaveData>(www.downloadHandler.text);
+                    waveData = ParsingSheet.GetDatas<WaveData>(www.downloadHandler.text, 7);
                 else
                     LoadStageData(type); 
                 break;
@@ -83,7 +83,7 @@ public class DataManager : Singleton<DataManager>, IManager
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success)
-                    waveGreenData = ParsingSheet.GetDatas<WaveData>(www.downloadHandler.text);
+                    waveGreenData = ParsingSheet.GetDatas<WaveData>(www.downloadHandler.text, 7);
                 else
                     LoadStageData(type); 
                 break;
@@ -92,7 +92,7 @@ public class DataManager : Singleton<DataManager>, IManager
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success)
-                    waveWhiteData = ParsingSheet.GetDatas<WaveData>(www.downloadHandler.text);
+                    waveWhiteData = ParsingSheet.GetDatas<WaveData>(www.downloadHandler.text, 7);
                 else
                     LoadStageData(type); 
                 break;
@@ -101,7 +101,7 @@ public class DataManager : Singleton<DataManager>, IManager
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success)
-                    storyData = ParsingSheet.GetDatas<StoryData>(www.downloadHandler.text);
+                    storyData = ParsingSheet.GetDatas<StoryData>(www.downloadHandler.text, 4);
                 else
                     LoadStageData(type);
                 isStoryLoad = true;

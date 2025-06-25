@@ -10,6 +10,8 @@ public class Pool : MonoBehaviour
 
     public void Init()
     {
+        if (!poolObject) return;
+
         Allocate();
     }
 

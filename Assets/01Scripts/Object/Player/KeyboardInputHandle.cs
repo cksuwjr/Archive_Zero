@@ -8,4 +8,9 @@ public class KeyboardInputHandle : MonoBehaviour, IInputHandle
     {
         return new Vector3(Input.GetAxis("Horizontal"), 0,Input.GetAxis("Vertical"));
     }
+
+    public bool GetKeyInput(KeyInput input)
+    {
+        return Input.GetButtonDown(input.ToString());
+    }
 }
