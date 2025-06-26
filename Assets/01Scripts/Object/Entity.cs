@@ -16,7 +16,7 @@ public class Entity : PoolObject
 
     }
 
-    public virtual void GetDamage(float damage)
+    public virtual void GetDamage(Entity attacker, float damage)
     {
         status.HP -= damage;
         if (status.HP < 0)

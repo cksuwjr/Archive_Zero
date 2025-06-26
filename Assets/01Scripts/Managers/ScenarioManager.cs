@@ -63,7 +63,7 @@ public class ScenarioManager : SingletonDestroy<ScenarioManager>, IManager
     {
         SoundManager.Instance.StopSound();
         AudioClip sound = Resources.Load<AudioClip>(stories[page].tts.Trim());
-
+        UIManager.Instance.SetStoryPage(page + 1, 2);
         if (sound)
             SoundManager.Instance.PlaySound(sound);
         StartCoroutine(LoadText(stories[page].content.Replace("  ", "\n\n")));

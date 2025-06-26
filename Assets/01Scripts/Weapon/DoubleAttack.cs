@@ -7,6 +7,7 @@ public class DoubleAttack : Skill
     public float damage = 10;
     protected override IEnumerator Cast_()
     {
+        var damageConst = GameManager.Instance.Player.GetComponent<Status>().AttackPower;
         var dir = transform.forward;
         for (int i = 0; i < count; i++)
         {
@@ -14,7 +15,7 @@ public class DoubleAttack : Skill
             if (proj.TryGetComponent<Projectile>(out var pro))
             {
                 proj.transform.position = transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
-                pro.Init(dir, damage, 20);
+                pro.Init(GameManager.Instance.Player, dir, damage * damageConst, 20);
                 pro.Fire();
             }
             yield return YieldInstructionCache.WaitForSeconds(0.6f / count);

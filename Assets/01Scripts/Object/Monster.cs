@@ -1,7 +1,6 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public enum MonsterState
 {
@@ -21,6 +20,11 @@ public class Monster : Entity, IMove
     private Vector3 direction;
     private Coroutine changeDirectionCoroutine;
 
+    private bool isBinded = false;
+
+    public static event Action<Monster> OnMonsterDie;
+    public static event Action<Monster> OnMonsterHit;
+
     protected override void DoAwake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -37,6 +41,7 @@ public class Monster : Entity, IMove
         player = GameManager.Instance.Player;
 
         movable = true;
+        isBinded = false;
 
         ChangeState(MonsterState.Moving);
     }
@@ -65,7 +70,8 @@ public class Monster : Entity, IMove
     {
         while (player != null)
         {
-            SetMoveTarget(player.transform.position);
+            if (!isBinded)
+                SetMoveTarget(player.transform.position);
             yield return YieldInstructionCache.WaitForSeconds(0.6f);
         }
         ChangeState(MonsterState.Idle);
@@ -88,7 +94,10 @@ public class Monster : Entity, IMove
 
         while (timer < 0.2f)
         {
-            transform.rotation = Quaternion.Slerp(startRot, targetRot, timer / 0.2f);
+            if (!isBinded)
+            {
+                transform.rotation = Quaternion.Slerp(startRot, targetRot, timer / 0.2f);
+            }
             timer += Time.deltaTime;
             yield return null;
         }
@@ -116,9 +125,36 @@ public class Monster : Entity, IMove
         rb.velocity = direction * status.MoveSpeed;
     }
 
+    public override void GetDamage(Entity attacker, float damage)
+    {
+        //rb.velocity = Vector3.zero;
+
+        KnockBack(attacker.gameObject, 3f);
+        OnMonsterHit?.Invoke(this);
+        base.GetDamage(this, damage);
+    }
+
+    public void KnockBack(GameObject fromwho, float howmuch)
+    {
+        StartCoroutine(CC(0.2f));
+
+        Vector3 dir = Vector3.zero;
+        try { dir = (fromwho.transform.position - transform.position).normalized; } catch { }
+        //transform.rotation = Quaternion.LookRotation(dir);
+        rb.velocity = new Vector3(-dir.x * howmuch, rb.velocity.y, -dir.z * howmuch);
+    }
+
+    public IEnumerator CC(float time)
+    {
+        isBinded = true;
+        yield return YieldInstructionCache.WaitForSeconds(time);
+        isBinded = false;
+    }
+
     protected override void Die()
     {
-        GameManager.Instance.Player.GetComponent<PlayerController>().GetExp(5);
+        //GameManager.Instance.Player.GetComponent<PlayerController>().GetExp(5);
+        OnMonsterDie?.Invoke(this);
         base.Die();
     }
 
@@ -127,7 +163,7 @@ public class Monster : Entity, IMove
         if (!collision.gameObject.CompareTag("Player")) return;
 
         if (collision.gameObject.gameObject.TryGetComponent<Entity>(out var entity))
-            entity.GetDamage(status.AttackPower);
+            entity.GetDamage(this, status.AttackPower);
     }
 
     private void OnTriggerExit(Collider other)

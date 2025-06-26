@@ -28,4 +28,14 @@ public class TimeManager : SingletonDestroy<TimeManager>
             OnTimeChanged?.Invoke(time);
         }
     }
+
+    public void Stop()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void Resume()
+    {
+        Time.timeScale = 1f;
+    }
 }

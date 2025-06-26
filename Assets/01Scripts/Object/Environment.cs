@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Environment : Entity
@@ -9,6 +7,11 @@ public class Environment : Entity
         if (other.CompareTag("EntityOuter"))
         {
             EntitySpawner.RePosition(this);
+
+            for(int i= 0; i< transform.childCount; i++)
+                transform.GetChild(i).gameObject.SetActive(false);
+
+            transform.GetChild(Random.Range(0, transform.childCount)).gameObject.SetActive(true);
         }
     }
 }

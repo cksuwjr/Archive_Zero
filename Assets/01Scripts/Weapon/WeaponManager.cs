@@ -8,6 +8,7 @@ public class WeaponManager : MonoBehaviour
     private bool fire2;
     private bool fire3;
     private bool fire4;
+    private bool fire5;
 
     [SerializeField] private Skill basicAttack;
 
@@ -15,6 +16,27 @@ public class WeaponManager : MonoBehaviour
     [SerializeField] private Skill skill2;
     [SerializeField] private Skill skill3;
     [SerializeField] private Skill skill4;
+
+    [SerializeField] private Skill specialSkill;
+
+    private void Awake()
+    {
+        basicAttack.SetAuto(true);
+    }
+
+    public void Init()
+    {
+        basicAttack.Init();
+
+        skill1.Init();
+        skill2.Init();
+        skill3.Init();
+        skill4.Init();
+
+        specialSkill.Init();
+
+        UIManager.Instance.SkillSelect();
+    }
 
 
     public void Fire(KeyInput input)
@@ -25,6 +47,8 @@ public class WeaponManager : MonoBehaviour
             case KeyInput.Fire2: fire2 = true; break;
             case KeyInput.Fire3: fire3 = true; break;
             case KeyInput.Fire4: fire4 = true; break;
+
+            case KeyInput.Fire5: fire5 = true; break;
         }
     }
 
@@ -51,7 +75,11 @@ public class WeaponManager : MonoBehaviour
             fire4 = false;
         }
 
-        basicAttack.Cast();
+        if (fire5)
+        {
+            Skill5();
+            fire5 = false;
+        }
     }
 
     private void Skill1()
@@ -80,5 +108,44 @@ public class WeaponManager : MonoBehaviour
         skill4.Cast();
 
         Debug.Log("스킬4 사용");
+    }
+
+    private void Skill5()
+    {
+        specialSkill.Cast();
+
+        Debug.Log("스킬5 사용");
+    }
+
+    public void AllCoolTimeDecline(float time)
+    {
+        basicAttack.CooltimeDecline(time);
+
+        skill1.CooltimeDecline(time);
+        skill2.CooltimeDecline(time);
+        skill3.CooltimeDecline(time);
+        skill4.CooltimeDecline(time);
+    }
+
+    public Skill GetSkillBasic()
+    {
+        return basicAttack;
+    }
+
+    public Skill GetSkillQ()
+    {
+        return skill1;
+    }
+    public Skill GetSkillW()
+    {
+        return skill2;
+    }
+    public Skill GetSkillE()
+    {
+        return skill3;
+    }
+    public Skill GetSkillR()
+    {
+        return skill4;
     }
 }
