@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,12 +10,19 @@ public abstract class Skill : MonoBehaviour
     [SerializeField] protected float cooltime;
     protected float ReusableWaitTime;
     protected bool Castable;
+    protected bool auto = false;
+
+    public Image skillImage;
     [SerializeField] protected Image cooltimeBox;
     [SerializeField] protected TextMeshProUGUI cooltimeText;
 
-    public List<string> inform = new List<string>();
+    public string skillName;
+    public string inform;
 
-    protected void Start()
+
+    [SerializeField] private AudioClip sound;
+
+    public void Init()
     {
         if (!TryGetComponent<Entity>(out controller))
             Debug.LogError("해당 대상에 Entity.cs 가 없습니다!");
@@ -30,7 +36,11 @@ public abstract class Skill : MonoBehaviour
             CooltimeUI(1, 0);
         else
             CooltimeUI(0, 0);
+
+        if (auto)
+            Cast();
     }
+
     public bool Cast()
     {
         if (Castable && skill_Level > 0)
@@ -38,6 +48,8 @@ public abstract class Skill : MonoBehaviour
             StopCast(); // 기존에 실행되던 동일 스킬 중단
             StartCoroutine("Cast_");
             StartCoroutine(Cooltime());
+            if(sound)
+                SoundManager.Instance.PlaySound(sound);
             return true;
         }
         else
@@ -65,6 +77,8 @@ public abstract class Skill : MonoBehaviour
         CooltimeUI(0, 0);
         ReusableWaitTime = 0;
         Castable = true;
+        if (auto)
+            Cast();
     }
 
     public void CooltimeUI(float imagefill, float textvalue)
@@ -87,5 +101,13 @@ public abstract class Skill : MonoBehaviour
     public virtual void Upgrade()
     {
         skill_Level += 1;
+
+        if(skill_Level == 1)
+            CooltimeUI(0, 0);
+    }
+
+    public void SetAuto(bool auto)
+    {
+        this.auto = auto;
     }
 }

@@ -11,19 +11,23 @@ public class Projectile : PoolObject, IWeapon
     private Vector3 direction;
 
     private GameObject owner;
+    [SerializeField] private bool onePass = true; 
 
     private void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
     }
 
-    public void Init(Vector3 direction, float damage, float speed)
+    public void Init(GameObject attacker, Vector3 direction, float damage, float speed)
     {
         SetEnable(true);
+        SetOwner(attacker);
         transform.forward = direction;
         this.direction = direction;
         this.damage = damage;
         this.speed = speed;
+
+        Invoke("ReturnToPool", 2);
     }
 
 
@@ -46,14 +50,23 @@ public class Projectile : PoolObject, IWeapon
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        try
         {
-            if (other.TryGetComponent<Entity>(out var entity))
+
+            if (other.CompareTag("Enemy"))
             {
-                entity.GetDamage(damage);
-                isInit = false;
-                ReturnToPool();
+                if (other.TryGetComponent<Entity>(out var entity))
+                {
+                    entity.GetDamage(owner.GetComponent<Entity>(), damage);
+                    isInit = false;
+                    if (onePass)
+                    {
+                        ReturnToPool();
+                        CancelInvoke("ReturnToPool");
+                    }
+                }
             }
         }
+        catch { }
     }
 }

@@ -15,12 +15,23 @@ public class SoundManager : Singleton<SoundManager>, IManager
 
     private SoundObject prevAudio;
 
+    public AudioClip hitSound;
+    public AudioClip dieSound;
+
+    public Pool soundPool;
+
     public void Init()
     {
+        if(transform.GetChild(0).TryGetComponent<Pool>(out soundPool))
+            soundPool?.Init();
+
         GetSoundValue();
 
         if(BGM != null)
             ChangeBGM(BGM);
+
+        Monster.OnMonsterHit += (monster) => { if (hitSound) PlaySound(hitSound); };
+        Monster.OnMonsterDie += (monster) => { if (dieSound) PlaySound(dieSound); };
     }
 
 
@@ -43,6 +54,11 @@ public class SoundManager : Singleton<SoundManager>, IManager
         //}
     }
 
+    public void ChangeBGMOneTime()
+    {
+        StartCoroutine("ChangeBGMOne");
+    }
+
 
     public void ChangeBGMVolume(float value)
     {
@@ -55,9 +71,9 @@ public class SoundManager : Singleton<SoundManager>, IManager
     {
         sfxVolume = value;
 
-        for (int i = 0; i < PoolManager.Instance.soundPool.transform.childCount; i++) 
+        for (int i = 0; i < SoundManager.Instance.soundPool.transform.childCount; i++) 
         {
-            Transform t = PoolManager.Instance.soundPool.transform.GetChild(i);
+            Transform t = SoundManager.Instance.soundPool.transform.GetChild(i);
             
             if(t.TryGetComponent<SoundObject>(out var sound)) 
             {
@@ -84,7 +100,7 @@ public class SoundManager : Singleton<SoundManager>, IManager
 
     public SoundObject PlaySound(AudioClip audioClip, bool imortal = false)
     {
-        if (PoolManager.Instance.soundPool.GetPoolObject().TryGetComponent<SoundObject>(out SoundObject soundObject))
+        if (SoundManager.Instance.soundPool.GetPoolObject().TryGetComponent<SoundObject>(out SoundObject soundObject))
         {
             soundObject.Init(audioClip, imortal);
             if(!imortal)
@@ -118,6 +134,36 @@ public class SoundManager : Singleton<SoundManager>, IManager
             yield return null;
         }
     }
+
+    IEnumerator ChangeBGMOne(AudioClip newClip)
+    {
+        var nowClip = BGMAudioObject.AudioSource;
+
+        current = percent = 0f;
+
+        while (percent < 0.5f)
+        {
+            current += Time.deltaTime;
+            percent = current / 0.5f;
+            BGMAudioObject.AudioSource.volume = Mathf.Lerp(bgmVolume, 0f, percent);
+            yield return null;
+        }
+
+        BGMAudioObject.AudioSource.clip = newClip;
+        BGMAudioObject.AudioSource.Play();
+        current = percent = 0f;
+
+        while (percent < 0.5f)
+        {
+            current += Time.deltaTime;
+            percent = current / 0.5f;
+            BGMAudioObject.AudioSource.volume = Mathf.Lerp(0f, bgmVolume, percent);
+            yield return null;
+        }
+
+
+    }
+
 
     public void GetSoundValue()
     {

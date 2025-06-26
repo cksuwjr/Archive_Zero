@@ -5,7 +5,8 @@ public enum KeyInput
     Fire1,
     Fire2,
     Fire3,
-    Fire4
+    Fire4,
+    Fire5
 }
 public interface IInputHandle
 {

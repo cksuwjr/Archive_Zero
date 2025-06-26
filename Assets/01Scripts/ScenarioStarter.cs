@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,15 +12,23 @@ public class ScenarioStarter : MonoBehaviour
         if (DataManager.Instance.isStoryLoad)
         {
             OnStart?.Invoke();
-            ScenarioManager.Instance.OnStoryEnd.AddListener(() => UIManager.Instance.OpenGuidPage());
-            UIManager.Instance.OnGuideEnd += () => StoryEnd();
+            if (UIManager.Instance)
+            {
+
+
+                ScenarioManager.Instance?.OnStoryEnd.AddListener(() => UIManager.Instance.OpenGuidPage());
+                UIManager.Instance.OnGuideEnd += () => StoryEnd();
+            }
         }
         else
             DataManager.Instance.OnStoryLoaded += () =>
             {
                 OnStart?.Invoke();
-                ScenarioManager.Instance.OnStoryEnd.AddListener(() => UIManager.Instance.OpenGuidPage());
-                UIManager.Instance.OnGuideEnd += () => StoryEnd();
+                if (UIManager.Instance)
+                {
+                    ScenarioManager.Instance?.OnStoryEnd.AddListener(() => UIManager.Instance.OpenGuidPage());
+                    UIManager.Instance.OnGuideEnd += () => StoryEnd();
+                }
             };
     }
 
