@@ -24,7 +24,28 @@ public class Dibbo : Skill
 
         prefabInstance.SetActive(true);
         prefabInstance.transform.localPosition = Vector3.zero;
-        yield return null;
+
+
+
+        rotater.speed = (85f + skill_Level * 50) * 3f;
+
+        float duration = 3f;
+        for (float i = 0; i < duration;)
+        {
+
+            var colliders = Physics.OverlapSphere(transform.position, 6);
+            for (int j = 0; j < colliders.Length; j++)
+            {
+                if (colliders[j].TryGetComponent<Item>(out var item))
+                {
+                    item.AcquireTo(GameManager.Instance.Player.GetComponent<PlayerController>());
+                }
+            }
+            i += Time.deltaTime;
+            yield return null;
+        }
+        //yield return YieldInstructionCache.WaitForSeconds(3f);
+        rotater.speed = 85f + skill_Level * 50;
     }
 
     public override void Upgrade()
@@ -46,25 +67,22 @@ public class Dibbo : Skill
         switch (skill_Level)
         {
             case 1:
-                attack.SetDamage(30);
-                rotater.speed = 135f;
+                attack.SetDamage(20);
                 break;
             case 2:
-                attack.SetDamage(40);
-                rotater.speed = 185f;
+                attack.SetDamage(30);
                 break;
             case 3:
                 attack.SetDamage(50);
-                rotater.speed = 235f;
                 break;
             case 4:
-                attack.SetDamage(60);
-                rotater.speed = 285f;
+                attack.SetDamage(100);
                 break;
             case 5:
-                attack.SetDamage(70);
-                rotater.speed = 335f;
+                attack.SetDamage(200);
                 break;
         }
+        rotater.speed = 85f + skill_Level * 50;
+
     }
 }

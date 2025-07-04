@@ -125,11 +125,11 @@ public class Monster : Entity, IMove
         rb.velocity = direction * status.MoveSpeed;
     }
 
-    public override void GetDamage(Entity attacker, float damage)
+    public override void GetDamage(Entity attacker, float damage, float knockbackTime = 3f)
     {
         //rb.velocity = Vector3.zero;
 
-        KnockBack(attacker.gameObject, 3f);
+        KnockBack(attacker.gameObject, knockbackTime);
         OnMonsterHit?.Invoke(this);
         base.GetDamage(this, damage);
     }

@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class PlayerController : Entity
@@ -10,14 +8,14 @@ public class PlayerController : Entity
     private IInputHandle inputHandle;
     private WeaponManager weaponManager;
 
-    private int level = 1;
-    private float[] expNeeds = {10,20,30,40,50,60,70,80,90,100,100,100,100,100,100,100,100,100,100 };
+    private int level = 0;
+    private float[] expNeeds = {5,10,20,35,50,80,120,150,200,250,300,400,500,600,700,800,900,1000,1000 };
 
     private bool hittable = true;
 
     public Action<float, float> OnChangeExp;
-    public Action<float, float> OnChangeArchive;
-    public Action<float, float> OnChangeHp;
+    public Action<float, float, float> OnChangeArchive;
+    public Action<float, float, float> OnChangeHp;
 
 
     public float archive = 0f;
@@ -33,13 +31,14 @@ public class PlayerController : Entity
         TryGetComponent<WeaponManager>(out weaponManager);
     }
 
-    public override void GetDamage(Entity attacker, float damage)
+    public override void GetDamage(Entity attacker, float damage, float knockbackTime = 3f)
     {
         if (!hittable) return;
 
+        var prevHp = status.HP;
         base.GetDamage(this, damage);
 
-        OnChangeHp?.Invoke(status.HP, status.MaxHP);
+        OnChangeHp?.Invoke(prevHp, status.HP, status.MaxHP);
         StartCoroutine("Invinsible");
     }
 
@@ -90,31 +89,54 @@ public class PlayerController : Entity
 
     public void GetExp(float exp)
     {
-        status.Exp += exp;
-        if (expNeeds[level] <= status.Exp)
-        {
-            status.Exp -= expNeeds[level];
-            LevelUp();
+        StartCoroutine("GetExpCo", exp);
+        //var prevExp = status.Exp;
+        //status.Exp += exp;
+        //if (expNeeds[level] <= status.Exp)
+        //{
+        //    status.Exp -= expNeeds[level];
+        //    LevelUp();
+        //}
+        //OnChangeExp?.Invoke(status.Exp, expNeeds[level]);
+    }
+
+    private IEnumerator GetExpCo(float exp)
+    {
+        float value = 0;
+        while (value <= exp) {
+            status.Exp += Time.deltaTime * 3;
+            value += Time.deltaTime * 3;
+            if (expNeeds[level] <= status.Exp)
+            {
+                status.Exp -= expNeeds[level];
+                LevelUp();
+            }
+            yield return null;
+            OnChangeExp?.Invoke(status.Exp, expNeeds[level]);
         }
-        OnChangeExp?.Invoke(status.Exp, expNeeds[level]);
     }
 
     public void GetHeal(float value)
     {
+        var prevHp = status.HP;
         status.HP += value;
         if(status.HP >= status.MaxHP)
             status.HP = status.MaxHP;
 
-        OnChangeHp?.Invoke(status.HP, status.MaxHP);
+        OnChangeHp?.Invoke(prevHp, status.HP, status.MaxHP);
 
     }
 
     public void GetArchive(float value)
     {
+        var prevArchive = archive;
         archive += value;
         if (archive >= maxArchive)
+        {
             archive = maxArchive;
-        OnChangeArchive?.Invoke(archive, maxArchive);
+            UIManager.Instance.FloatFillArchive();
+        }
+        OnChangeArchive?.Invoke(prevArchive, archive, maxArchive);
     }
 
     private void LevelUp()

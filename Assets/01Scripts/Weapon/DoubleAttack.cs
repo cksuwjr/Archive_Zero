@@ -15,7 +15,8 @@ public class DoubleAttack : Skill
             if (proj.TryGetComponent<Projectile>(out var pro))
             {
                 proj.transform.position = transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
-                pro.Init(GameManager.Instance.Player, dir, damage * damageConst, 20);
+                pro.Init(GameManager.Instance.Player, dir, damage * damageConst, 20
+                    );
                 pro.Fire();
             }
             yield return YieldInstructionCache.WaitForSeconds(0.6f / count);
@@ -39,18 +40,21 @@ public class DoubleAttack : Skill
                 break;
             case 3:
                 count = 3;
-                damage = 20;
+                damage = 35;
                 break;
             case 4:
                 count = 4;
-                damage = 20;
+                damage = 60;
                 break;
             case 5:
                 count = 5;
-                damage = 20;
+                damage = 100;
                 break;
 
         }
     }
-}
+    // 40  60  100  180  320 codec
+    // 60  90  120  150  180 dot
+    // 20  40  60  80  100   basic
+} 
 

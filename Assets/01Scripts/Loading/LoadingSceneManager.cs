@@ -1,6 +1,5 @@
 using System.Collections;
 using TMPro;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,6 +20,7 @@ public class LoadingSceneManager : MonoBehaviour
     public static void SetNextScene(string sceneName)
     {
         nextSceneName = sceneName;
+        Time.timeScale = 1;
     }
 
     private IEnumerator LoadSceneAsync()

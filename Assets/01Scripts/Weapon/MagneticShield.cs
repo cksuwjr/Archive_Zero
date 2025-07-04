@@ -19,6 +19,12 @@ public class MagneticShield : Skill
         {
             prefabInstance = Instantiate(barrierPrefab, transform);
         }
+        if(prefabInstance.TryGetComponent<DibboAttack>(out var di))
+        {
+            di.SetDamage(damage);
+        }
+            
+
 
         prefabInstance.SetActive(true);
         yield return YieldInstructionCache.WaitForSeconds(duration);
@@ -35,26 +41,26 @@ public class MagneticShield : Skill
         {
             case 1:
                 damage = 0;
-                duration = 3f;
+                duration = 1f;
                 break;
             case 2:
                 damage = 0;
-                duration = 3f;
+                duration = 1.75f;
                 break;
             case 3:
                 damage = 40;
-                duration = 3f;
+                duration = 1.75f;
                 prefabInstance?.SetActive(false);
                 prefabInstance = Instantiate(barrierPrefab2, transform);
                 prefabInstance.SetActive(false);
                 break;
             case 4:
                 damage = 40;
-                duration = 3f;
+                duration = 2.5f;
                 break;
             case 5:
                 damage = 80;
-                duration = 3f;
+                duration = 2.5f;
                 break;
         }
     }

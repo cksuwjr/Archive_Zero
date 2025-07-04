@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class HPItem : Item
 {
-    private void OnTriggerEnter(Collider other)
+    public override void Acquired(Entity entity)
     {
-        if (other.CompareTag("Player"))
-        {
-            if (other.TryGetComponent<PlayerController>(out var player))
-            {
-                player.GetHeal(15);
-                ReturnToPool();
-            }
-        }
+        if (entity.TryGetComponent<PlayerController>(out var player))
+            player.GetHeal(25);
+        base.Acquired(entity);
     }
 }

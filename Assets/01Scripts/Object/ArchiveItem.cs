@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class ArchiveItem : Item
 {
-    private void OnTriggerEnter(Collider other)
+    public override void Acquired(Entity entity)
     {
-        if (other.CompareTag("Player"))
-        {
-            if (other.TryGetComponent<PlayerController>(out var player))
-            {
-                player.GetArchive(10);
-                ReturnToPool();
-            }
-        }
+        if (entity.TryGetComponent<PlayerController>(out var player))
+            player.GetArchive(Random.Range(8f, 12f));
+        base.Acquired(entity);
     }
 }

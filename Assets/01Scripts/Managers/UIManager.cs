@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -31,6 +32,13 @@ public class UIManager : SingletonDestroy<UIManager>, IManager
     public event Action OnGuideEnd;
 
     private GameObject canvas;
+
+    private Image dvoImage;
+    private Image dvoChatPannelImage;
+    private TextMeshProUGUI dvoChat;
+
+    private bool archiveFloatable = true;
+
     public void Init()
     {
         canvas = GameObject.Find("Canvas");
@@ -43,15 +51,17 @@ public class UIManager : SingletonDestroy<UIManager>, IManager
         //
         canvas.transform.GetChild(2).GetChild(0).TryGetComponent<Image>(out archiveBar);
         canvas.transform.GetChild(2).GetChild(1).GetChild(0).GetChild(0).TryGetComponent<TextMeshProUGUI>(out archieveText);
-
+        canvas.transform.GetChild(2).GetChild(2).TryGetComponent<Image>(out dvoImage);
+        canvas.transform.GetChild(2).GetChild(2).GetChild(0).TryGetComponent<Image>(out dvoChatPannelImage);
+        canvas.transform.GetChild(2).GetChild(2).GetChild(0).GetChild(0).TryGetComponent<TextMeshProUGUI>(out dvoChat);
 
 
         if (player)
         {
-            player.OnChangeExp += (exp, maxExp) => { expBar.fillAmount = exp / maxExp; };
-            player.OnChangeArchive += (archive, maxArchive) => 
-            { 
-                archiveBar.fillAmount = archive / maxArchive;
+            player.OnChangeExp += (exp, maxExp) => {  expBar.fillAmount = exp / maxExp; };
+            player.OnChangeArchive += (prevArchive, archive, maxArchive) => 
+            {
+                FillImageAnim(archiveBar, prevArchive, archive, maxArchive);
                 archieveText.text = $"{Mathf.Floor((archive / maxArchive) * 100)}%";
             };
         }
@@ -72,7 +82,7 @@ public class UIManager : SingletonDestroy<UIManager>, IManager
         
         var hpPannel = canvas.transform.GetChild(4).gameObject;
         if (hpPannel.transform.GetChild(0).TryGetComponent<Image>(out var hpBar))
-            player.OnChangeHp += (hp, maxhp) => hpBar.fillAmount = hp / maxhp;
+            player.OnChangeHp += (prevHp, hp, maxhp) => FillImageAnim(hpBar, prevHp, hp, maxhp);
 
         selectPannel = canvas.transform.GetChild(5).gameObject;
 
@@ -334,5 +344,48 @@ public class UIManager : SingletonDestroy<UIManager>, IManager
     {
         LoadingSceneManager.SetNextScene("TitleScene");
         SceneManager.LoadScene("LoadingScene");
+    }
+
+    public void FillImageAnim(Image bar, float nowValue, float fillValue, float maxValue)
+    {
+        StartCoroutine(FillBar(bar, nowValue, fillValue, maxValue));
+    }
+
+    private IEnumerator FillBar(Image bar, float nowValue, float fillValue, float maxValue)
+    {
+        float time = 0.5f;
+        float timer = 0f;
+        bar.fillAmount = nowValue / maxValue;
+        while (timer <= time)
+        {
+            bar.fillAmount = Mathf.Lerp(nowValue, fillValue, timer / time) / maxValue;
+            yield return null;
+            timer += Time.deltaTime;
+        }
+        bar.fillAmount = fillValue / maxValue;
+    }
+
+    public void FloatFillArchive()
+    {
+        if (!archiveFloatable) return;
+        dvoChat.text = "";
+        StartCoroutine("Archive");
+    }
+
+    private IEnumerator Archive()
+    {
+        archiveFloatable = false;
+        StartCoroutine(FillBar(dvoImage, 0, 100, 100));
+        yield return YieldInstructionCache.WaitForSeconds(0.5f);
+        StartCoroutine(FillBar(dvoChatPannelImage, 0, 100, 100));
+        yield return YieldInstructionCache.WaitForSeconds(0.5f);
+        dvoChat.text = "아카이브 스톰이 모두 충전됐어!";
+        yield return YieldInstructionCache.WaitForSeconds(2);
+        dvoChat.text = "";
+        StartCoroutine(FillBar(dvoChatPannelImage, 100, 0, 100));
+        yield return YieldInstructionCache.WaitForSeconds(0.5f);
+        StartCoroutine(FillBar(dvoImage, 100, 0, 100));
+        yield return YieldInstructionCache.WaitForSeconds(5f);
+        archiveFloatable = true;
     }
 }

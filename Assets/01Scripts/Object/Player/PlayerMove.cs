@@ -28,6 +28,7 @@ public class PlayerMove : MonoBehaviour, IMove
         moveDelta.x = direction.x;
         moveDelta.y = 0;
         moveDelta.z = direction.z;
+
         animator?.SetBool("Move", direction.sqrMagnitude > 0.01f);
         if (direction != Vector3.zero)
         {
@@ -36,6 +37,7 @@ public class PlayerMove : MonoBehaviour, IMove
 
         if (!Physics.Raycast(checkWallPosY.transform.position, transform.forward, 1, wallLayer))
         {
+            moveDelta.Normalize();
             moveDelta *= (moveSpeed * Time.deltaTime);
             moveDelta += transform.position;
 

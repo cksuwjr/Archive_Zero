@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,13 +16,13 @@ public abstract class Skill : MonoBehaviour
     public Image skillImage;
     [SerializeField] protected Image cooltimeBox;
     [SerializeField] protected TextMeshProUGUI cooltimeText;
-
+    [SerializeField] protected Image usableUIBox;
     public string skillName;
     public string inform;
 
 
     [SerializeField] private AudioClip sound;
-
+    private Color originColor;
     public void Init()
     {
         if (!TryGetComponent<Entity>(out controller))
@@ -36,6 +37,10 @@ public abstract class Skill : MonoBehaviour
             CooltimeUI(1, 0);
         else
             CooltimeUI(0, 0);
+
+        if(cooltimeBox)
+            originColor = cooltimeBox.color;
+
 
         if (auto)
             Cast();
@@ -81,10 +86,27 @@ public abstract class Skill : MonoBehaviour
             Cast();
     }
 
+
+
     public void CooltimeUI(float imagefill, float textvalue)
     {
         if (cooltimeBox)
             cooltimeBox.fillAmount = imagefill;
+        if (usableUIBox)
+        {
+            if (skill_Level > 0)
+            {
+                if (ReusableWaitTime <= 0.5f) {
+                    var color = usableUIBox.color;
+                    usableUIBox.fillAmount = 1;
+                    color.a = ReusableWaitTime > 0.25f ? (0.5f - ReusableWaitTime) * 2 : 2 * ReusableWaitTime;
+                    Debug.Log(color.a);
+                    usableUIBox.color = color;
+                }
+            }
+            if(imagefill == 0)
+                usableUIBox.fillAmount = 0;
+        }
         if (cooltimeText)
         {
             cooltimeText.text = ((int)textvalue).ToString();
@@ -94,9 +116,43 @@ public abstract class Skill : MonoBehaviour
     }
     public void CooltimeDecline(float howmuch)
     {
+        if (skill_Level < 1) return;
+
         ReusableWaitTime -= howmuch;
         CooltimeUI(ReusableWaitTime / cooltime, ReusableWaitTime + 1);
+        if (ReusableWaitTime <= 0)
+        {
+            CooltimeUI(0, 0);
+        }
+        if (cooltimeBox)
+        {
+            StopCoroutine("WhiterCooltimeUI");
+            cooltimeBox.color = originColor;
+            StartCoroutine("WhiterCooltimeUI");
+        }
     }
+
+    private IEnumerator WhiterCooltimeUI()
+    {
+        float timer = 0f;
+
+        Color color = Color.white;
+        color.a = 0.6f;
+        while (timer < 0.3f)
+        {
+            cooltimeBox.color = Color.Lerp(originColor, color, timer / 0.3f);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        timer = 0;
+        while (timer < 0.3f)
+        {
+            cooltimeBox.color = Color.Lerp(originColor, color, 1 - (timer / 0.3f));
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+
 
     public virtual void Upgrade()
     {

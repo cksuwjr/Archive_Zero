@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class ExpItem : Item
 {
-    private void OnTriggerEnter(Collider other)
+    public override void Acquired(Entity entity)
     {
-        if (other.CompareTag("Player"))
-        {
-            if (other.TryGetComponent<PlayerController>(out var player))
-            {
-                player.GetExp(2);
-                ReturnToPool();
-            }
-        }
+        if (entity.TryGetComponent<PlayerController>(out var player))
+            player.GetExp(2);
+        base.Acquired(entity);
     }
 }

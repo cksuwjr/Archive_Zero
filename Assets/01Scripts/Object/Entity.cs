@@ -16,10 +16,10 @@ public class Entity : PoolObject
 
     }
 
-    public virtual void GetDamage(Entity attacker, float damage)
+    public virtual void GetDamage(Entity attacker, float damage, float knockbackTime = 3f)
     {
         status.HP -= damage;
-        if (status.HP < 0)
+        if (status.HP <= 0)
             Die();
     }
 

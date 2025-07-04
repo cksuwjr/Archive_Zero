@@ -25,9 +25,9 @@ public class TitleSceneManager : MonoBehaviour, IManager
         var ui = GameObject.Find("Canvas");
 
         
-        ui.transform.GetChild(0).GetChild(1).TryGetComponent<TextMeshProUGUI>(out clickText);
-        var clickUI = ui.transform.GetChild(0).GetChild(2).gameObject;
-        menu = ui.transform.GetChild(0).GetChild(3).gameObject;
+        ui.transform.GetChild(0).GetChild(1).GetChild(0).TryGetComponent<TextMeshProUGUI>(out clickText);
+        var clickUI = ui.transform.GetChild(0).GetChild(1).gameObject;
+        menu = ui.transform.GetChild(0).GetChild(2).gameObject;
 
 
         if (clickUI.TryGetComponent<Button>(out var btn))

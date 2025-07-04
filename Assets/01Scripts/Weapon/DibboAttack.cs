@@ -11,7 +11,7 @@ public class DibboAttack : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Boss"))
         {
             if (other.gameObject.TryGetComponent<Monster>(out var mon))
                 mon.GetDamage(GameManager.Instance.Player.GetComponent<Entity>(), damage);
@@ -20,7 +20,7 @@ public class DibboAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy") || other.CompareTag("Boss"))
         {
             if (other.TryGetComponent<Monster>(out var mon))
                 mon.GetDamage(GameManager.Instance.Player.GetComponent<Entity>(), damage);

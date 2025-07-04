@@ -6,7 +6,7 @@ public class KeyboardInputHandle : MonoBehaviour, IInputHandle
 {
     public Vector3 GetInput()
     {
-        return new Vector3(Input.GetAxis("Horizontal"), 0,Input.GetAxis("Vertical"));
+        return new Vector3(Input.GetAxisRaw("Horizontal"), 0,Input.GetAxisRaw("Vertical"));
     }
 
     public bool GetKeyInput(KeyInput input)

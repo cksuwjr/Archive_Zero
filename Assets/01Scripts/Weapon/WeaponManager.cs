@@ -121,10 +121,10 @@ public class WeaponManager : MonoBehaviour
     {
         basicAttack.CooltimeDecline(time);
 
-        skill1.CooltimeDecline(time);
-        skill2.CooltimeDecline(time);
-        skill3.CooltimeDecline(time);
-        skill4.CooltimeDecline(time);
+         if(skill1.skill_Level > 0) skill1.CooltimeDecline(time);
+         if(skill2.skill_Level > 0) skill2.CooltimeDecline(time);
+         if(skill3.skill_Level > 0) skill3.CooltimeDecline(time);
+         if(skill4.skill_Level > 0) skill4.CooltimeDecline(time);
     }
 
     public Skill GetSkillBasic()
